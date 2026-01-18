@@ -427,7 +427,7 @@ Light:
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 2
+    m_Type: 1
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
@@ -464,7 +464,7 @@ Light:
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
-  m_ColorTemperature: 5000
+  m_ColorTemperature: 2000
   m_UseColorTemperature: 1
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
@@ -738,7 +738,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timerText: {fileID: 431206994}
-  config: {fileID: 0}
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   warningColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1 &482123306
@@ -1676,7 +1675,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d50a9cadd286c4e479820bedbae3e869, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  config: {fileID: 0}
 --- !u!4 &1017141332
 Transform:
   m_ObjectHideFlags: 0
