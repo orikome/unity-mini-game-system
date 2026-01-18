@@ -16,6 +16,7 @@ A simple chess training game where you click all valid knight moves before time 
 5. **Restart**: Hit the restart button and try again!
 
 ## Gameplay Demo
+![gameplay](https://github.com/user-attachments/assets/3c1065bd-1aa3-4a31-91db-c27887a5be20)
 
 
 ## Project Structure
