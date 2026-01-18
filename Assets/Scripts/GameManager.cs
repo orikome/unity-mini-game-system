@@ -45,12 +45,11 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         Instance = this;
+        boardManager = FindFirstObjectByType<BoardManager>();
     }
 
     void Start()
     {
-        boardManager = FindFirstObjectByType<BoardManager>(); // Could be cached
-
         // Subscribe to timer events
         if (Timer.Instance != null)
         {
@@ -85,7 +84,7 @@ public class GameManager : MonoBehaviour
         );
 
         // Spawn knight
-        GameObject knight = SpawnKnight(knightPosition);
+        GameObject knight = boardManager.SpawnKnight(knightPosition, config);
 
         // Set knight square color
         boardManager
@@ -188,30 +187,6 @@ public class GameManager : MonoBehaviour
 
         score = 0;
         StartGame();
-    }
-
-    private GameObject SpawnKnight(Vector2Int position)
-    {
-        GameObject knight;
-
-        if (config.knightPrefab != null)
-        {
-            knight = Instantiate(config.knightPrefab);
-        }
-        else
-        {
-            // Fallback to primitive if no prefab assigned
-            knight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        }
-
-        knight.transform.position = new Vector3(
-            position.x - config.boardSize / 2f,
-            config.knightHeight,
-            position.y - config.boardSize / 2f
-        );
-        knight.name = "Knight";
-
-        return knight;
     }
 
     private void OnDestroy()

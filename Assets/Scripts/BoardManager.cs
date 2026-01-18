@@ -4,6 +4,7 @@ public class BoardManager : MonoBehaviour
 {
     public ClickableSquare[,] grid;
     private int boardSize;
+    private GameObject currentKnight;
 
     public void GenerateBoard(int size)
     {
@@ -58,10 +59,35 @@ public class BoardManager : MonoBehaviour
         }
 
         // Destroy knight if exists
-        GameObject knight = GameObject.Find("Knight");
-        if (knight != null)
+        if (currentKnight != null)
         {
-            Destroy(knight);
+            Destroy(currentKnight);
+            currentKnight = null;
         }
+    }
+
+    public GameObject SpawnKnight(Vector2Int position, GameConfig config)
+    {
+        GameObject knight;
+
+        if (config.knightPrefab != null)
+        {
+            knight = Instantiate(config.knightPrefab);
+        }
+        else
+        {
+            // Fallback to primitive if no prefab assigned
+            knight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        }
+
+        knight.transform.position = new Vector3(
+            position.x - config.boardSize / 2f,
+            config.knightHeight,
+            position.y - config.boardSize / 2f
+        );
+        knight.name = "Knight";
+
+        currentKnight = knight;
+        return knight;
     }
 }

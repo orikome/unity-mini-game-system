@@ -47,7 +47,7 @@ public class TutorialManager : MonoBehaviour
         knightPosition = GameManager.Instance.Config.tutorialKnightPosition;
 
         // Spawn knight
-        GameObject knight = SpawnKnight(knightPosition);
+        GameObject knight = boardManager.SpawnKnight(knightPosition, GameManager.Instance.Config);
 
         // Set knight square color
         boardManager
@@ -96,30 +96,6 @@ public class TutorialManager : MonoBehaviour
                 .Config
                 .incorrectMoveColor;
         }
-    }
-
-    private GameObject SpawnKnight(Vector2Int position)
-    {
-        GameObject knight;
-
-        if (GameManager.Instance.Config.knightPrefab != null)
-        {
-            knight = Instantiate(GameManager.Instance.Config.knightPrefab);
-        }
-        else
-        {
-            // Fallback to primitive if no prefab assigned
-            knight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        }
-
-        knight.transform.position = new Vector3(
-            position.x - GameManager.Instance.Config.boardSize / 2f,
-            GameManager.Instance.Config.knightHeight,
-            position.y - GameManager.Instance.Config.boardSize / 2f
-        );
-        knight.name = "Knight";
-
-        return knight;
     }
 
     private void CompleteTutorial()
