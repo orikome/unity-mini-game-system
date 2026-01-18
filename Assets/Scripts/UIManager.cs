@@ -8,6 +8,7 @@ public class UIManager : MonoBehaviour
     public GameObject playingUI;
     public GameObject resultsUI;
     public GameObject tutorialUI;
+    public GameObject failUI;
 
     private CanvasGroup currentUI;
 
@@ -44,6 +45,7 @@ public class UIManager : MonoBehaviour
             playingUI.SetActive(false);
             resultsUI.SetActive(false);
             tutorialUI.SetActive(false);
+            failUI.SetActive(false);
             newUI.gameObject.SetActive(true);
             newUI.alpha = 1;
             newUI.interactable = true;
@@ -65,7 +67,8 @@ public class UIManager : MonoBehaviour
                 go = playingUI;
                 break;
             case GameState.Results:
-                go = resultsUI;
+                // Show failUI if player lost, resultsUI if player won
+                go = GameManager.Instance.DidWin ? resultsUI : failUI;
                 break;
             case GameState.Tutorial:
                 go = tutorialUI;

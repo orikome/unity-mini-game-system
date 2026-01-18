@@ -27,7 +27,10 @@ public class GameManager : MonoBehaviour
     private HashSet<Vector2Int> correctMoves;
     private HashSet<Vector2Int> clickedMoves;
     private int score;
+    private bool didWin;
     private Dictionary<GameState, Action> stateHandlers;
+
+    public bool DidWin => didWin;
 
     void Awake()
     {
@@ -156,8 +159,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void EndGame()
+    void EndGame(bool won = true)
     {
+        didWin = won;
+
         // Stop timer
         if (Timer.Instance != null)
         {
@@ -166,14 +171,23 @@ public class GameManager : MonoBehaviour
 
         CurrentState = GameState.Results;
         score = correctMoves.Count;
-        Debug.Log($"All correct moves clicked! Score: {score}. Press R to restart.");
+        if (won)
+        {
+            Debug.Log($"All correct moves clicked! Score: {score}. Press R to restart.");
+        }
+        else
+        {
+            Debug.Log(
+                $"Time's up! You clicked {clickedMoves.Count} out of {score} correct moves. Press R to restart."
+            );
+        }
     }
 
     void OnTimeUp()
     {
         if (CurrentState == GameState.Playing)
         {
-            EndGame();
+            EndGame(false);
         }
     }
 
