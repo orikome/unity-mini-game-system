@@ -2,22 +2,16 @@
 
 A simple chess training game where you click all valid knight moves before time runs out. Built for a Unity developer position assignment in around 6 hours.
 
-## Technical Notes
-
-- **Unity Version**: 6000.1.17f
-- **Single Scene**: Everything happens in `MainScene`
-
-## How to Play
-
-1. **Tutorial Mode** (first time only): The game shows you the ropes by highlighting valid knight moves in yellow. Click them all to get started.
-2. **Main Game**: A knight spawns on a random square. Your job is to click every square the knight can legally move to.
-3. **Timer**: You've got 15 seconds (configurable) to find all moves.
-4. **Win Condition**: Click all correct moves before time runs out!
-5. **Restart**: Hit the restart button and try again!
-
 ## Gameplay Demo
 ![gameplay](https://github.com/user-attachments/assets/3c1065bd-1aa3-4a31-91db-c27887a5be20)
 
+## How to Play
+
+1. **Tutorial Mode** (first time only): Valid knight moves are highlighted in yellow. Click all highlighted squares to complete the tutorial.
+2. **Main Game**: A knight spawns on a random square. Click every square the knight can legally move to.
+3. **Timer**: 15 seconds (configurable) to find all valid moves.
+4. **Win Condition**: Click all correct moves before time expires.
+5. **Restart**: Use the restart button to play again.
 
 ## Project Structure
 
@@ -26,11 +20,11 @@ I went with a clean separation of concerns using a few key patterns:
 
 **Finite State Machine**: The game has 4 states (Menu, Tutorial, Playing, Results) managed by `GameManager`. State transitions trigger events that other systems listen to.
 
-**Singletons**: Core managers (`GameManager`, `UIManager`, `Timer`, `TutorialManager`) use the singleton pattern. I know some people aren't fans, but for a small single-scene game it is simple and easy.
+**Singletons**: Core managers (`GameManager`, `UIManager`, `Timer`, `TutorialManager`) use the singleton pattern for straightforward access in a single-scene context.
 
-**Event-Driven**: Everything communicates through C# events to keep coupling low. The timer fires events when time's up, the game manager broadcasts state changes, and UI components just listen and react. No messy references everywhere.
+**Event-Driven**: Systems communicate through C# events to minimize coupling. The timer broadcasts time events, the game manager broadcasts state changes, and UI components respond accordingly.
 
-**ScriptableObject Config**: All the tunable things (board size, timer duration, colors) lives in `GameConfig.asset` so you can tweak without touching code.
+**ScriptableObject Config**: All configurable parameters (board size, timer duration, colors) are stored in `GameConfig.asset` for runtime-free adjustments.
 
 ### The Files
 
@@ -68,4 +62,4 @@ I wanted to show I can organize code properly without over-engineering it. Each 
 - Sound effects and music
 - Particle effects when you get moves right
 - Better visual feedback (animations, screen shake)
-
+- Ensure UI works on different screen sizes and aspect ratios
