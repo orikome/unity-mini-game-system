@@ -5,7 +5,7 @@ public class BoardManager : MonoBehaviour
     public static int BoardSize = 5;
     public ClickableSquare[,] grid;
 
-    void Start()
+    public void GenerateBoard()
     {
         grid = new ClickableSquare[BoardSize, BoardSize];
         GenerateGrid();
@@ -20,13 +20,15 @@ public class BoardManager : MonoBehaviour
                 GameObject squareObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 squareObj.transform.position = new Vector3(
                     x - BoardSize / 2f,
-                    0,
+                    -5f, // Start below the board
                     z - BoardSize / 2f
                 );
                 squareObj.transform.parent = transform;
                 squareObj.name = $"Square_{x}_{z}";
                 squareObj.AddComponent<ClickableSquare>();
                 squareObj.AddComponent<BoxCollider>();
+                squareObj.AddComponent<CubeRiseAnimation>();
+
                 ClickableSquare square = squareObj.GetComponent<ClickableSquare>();
                 square.Initialize(
                     new Vector2Int(x, z),

@@ -36,7 +36,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        boardManager = FindFirstObjectByType<BoardManager>();
+        boardManager = FindFirstObjectByType<BoardManager>(); // Could be cached
         stateHandlers = new Dictionary<GameState, Action>
         {
             { GameState.Menu, HandleMenu },
@@ -54,6 +54,8 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
+        boardManager.GenerateBoard();
+
         CurrentState = GameState.Playing;
         Debug.Log("Game started! Click all possible knight moves.");
 
@@ -135,15 +137,22 @@ public class GameManager : MonoBehaviour
 
     public void RestartGame()
     {
-        // Reset board colors
-        for (int x = 0; x < BoardManager.BoardSize; x++)
+        // Destroy all squares
+        if (boardManager.grid != null)
         {
-            for (int z = 0; z < BoardManager.BoardSize; z++)
+            for (int x = 0; x < BoardManager.BoardSize; x++)
             {
-                Color originalColor = (x + z) % 2 == 0 ? Color.white : Color.black;
-                boardManager.grid[x, z].GetComponent<Renderer>().material.color = originalColor;
+                for (int z = 0; z < BoardManager.BoardSize; z++)
+                {
+                    if (boardManager.grid[x, z] != null)
+                    {
+                        Destroy(boardManager.grid[x, z].gameObject);
+                    }
+                }
             }
+            boardManager.grid = null;
         }
+
         // Destroy knight if exists
         GameObject knight = GameObject.Find("Knight");
         if (knight != null)
