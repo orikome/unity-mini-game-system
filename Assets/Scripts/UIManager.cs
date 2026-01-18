@@ -2,9 +2,32 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start() { }
+    public static UIManager Instance;
+    public GameObject menuUI;
+    public GameObject playingUI;
+    public GameObject resultsUI;
 
-    // Update is called once per frame
-    void Update() { }
+    void Awake()
+    {
+        Instance = this;
+    }
+
+    void Start()
+    {
+        GameManager.Instance.OnStateChanged += OnStateChanged;
+        OnStateChanged(GameManager.Instance.CurrentState);
+    }
+
+    void OnDestroy()
+    {
+        if (GameManager.Instance != null)
+            GameManager.Instance.OnStateChanged -= OnStateChanged;
+    }
+
+    private void OnStateChanged(GameState newState)
+    {
+        menuUI.SetActive(newState == GameState.Menu);
+        playingUI.SetActive(newState == GameState.Playing);
+        resultsUI.SetActive(newState == GameState.Results);
+    }
 }

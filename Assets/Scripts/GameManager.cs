@@ -65,7 +65,11 @@ public class GameManager : MonoBehaviour
 
         // Spawn knight primitive
         GameObject knight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        knight.transform.position = new Vector3(knightPosition.x, 1, knightPosition.y);
+        knight.transform.position = new Vector3(
+            knightPosition.x - BoardManager.BoardSize / 2f,
+            1,
+            knightPosition.y - BoardManager.BoardSize / 2f
+        );
         knight.name = "Knight";
 
         // Set knight square color

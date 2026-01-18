@@ -18,7 +18,11 @@ public class BoardManager : MonoBehaviour
             for (int z = 0; z < BoardSize; z++)
             {
                 GameObject squareObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                squareObj.transform.position = new Vector3(x, 0, z);
+                squareObj.transform.position = new Vector3(
+                    x - BoardSize / 2f,
+                    0,
+                    z - BoardSize / 2f
+                );
                 squareObj.transform.parent = transform;
                 squareObj.name = $"Square_{x}_{z}";
                 squareObj.AddComponent<ClickableSquare>();
