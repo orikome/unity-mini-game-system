@@ -6,6 +6,7 @@ public class UIManager : MonoBehaviour
     public GameObject menuUI;
     public GameObject playingUI;
     public GameObject resultsUI;
+    public GameObject tutorialUI;
 
     void Awake()
     {
@@ -29,5 +30,6 @@ public class UIManager : MonoBehaviour
         menuUI.SetActive(newState == GameState.Menu);
         playingUI.SetActive(newState == GameState.Playing);
         resultsUI.SetActive(newState == GameState.Results);
+        tutorialUI.SetActive(newState == GameState.Tutorial);
     }
 }

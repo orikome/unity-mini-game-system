@@ -40,10 +40,21 @@ public class GameManager : MonoBehaviour
         stateHandlers = new Dictionary<GameState, Action>
         {
             { GameState.Menu, HandleMenu },
+            { GameState.Tutorial, HandleTutorial },
             { GameState.Playing, HandlePlaying },
             { GameState.Results, HandleResults },
         };
-        CurrentState = GameState.Menu;
+        if (
+            !PlayerPrefs.HasKey("TutorialCompleted")
+            || PlayerPrefs.GetInt("TutorialCompleted") == 0
+        )
+        {
+            CurrentState = GameState.Tutorial;
+        }
+        else
+        {
+            CurrentState = GameState.Menu;
+        }
         Debug.Log("Press Space to start the game");
     }
 
@@ -104,6 +115,11 @@ public class GameManager : MonoBehaviour
 
     public void OnSquareClicked(Vector2Int pos)
     {
+        if (CurrentState == GameState.Tutorial)
+        {
+            TutorialManager.Instance.OnSquareClicked(pos);
+            return;
+        }
         if (CurrentState != GameState.Playing)
             return;
         if (clickedMoves.Contains(pos))
@@ -168,6 +184,11 @@ public class GameManager : MonoBehaviour
         {
             StartGame();
         }
+    }
+
+    private void HandleTutorial()
+    {
+        TutorialManager.Instance.HandleTutorial();
     }
 
     private void HandlePlaying()
