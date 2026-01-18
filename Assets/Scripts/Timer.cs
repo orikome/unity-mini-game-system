@@ -6,6 +6,7 @@ public class Timer : MonoBehaviour
     public static Timer Instance { get; private set; }
 
     public event Action OnTimeUp;
+    public event Action<float> OnTimerTick;
 
     public float RemainingTime { get; private set; }
     public bool IsRunning { get; private set; }
@@ -25,9 +26,11 @@ public class Timer : MonoBehaviour
 
     private void Update()
     {
-        if (!IsRunning) return;
+        if (!IsRunning)
+            return;
 
         RemainingTime -= Time.deltaTime;
+        OnTimerTick?.Invoke(RemainingTime);
 
         if (RemainingTime <= 0f)
         {

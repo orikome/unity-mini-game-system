@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
             {
                 _currentState = value;
                 OnStateChanged?.Invoke(_currentState);
+                OnStateEntered(_currentState);
             }
         }
     }
@@ -30,7 +31,6 @@ public class GameManager : MonoBehaviour
     private HashSet<Vector2Int> correctClickedMoves;
     private int score;
     private bool didWin;
-    private Dictionary<GameState, Action> stateHandlers;
 
     public bool DidWin => didWin;
     public int CorrectClickedCount => correctClickedMoves?.Count ?? 0;
@@ -50,13 +50,7 @@ public class GameManager : MonoBehaviour
         {
             Timer.Instance.OnTimeUp += OnTimeUp;
         }
-        stateHandlers = new Dictionary<GameState, Action>
-        {
-            { GameState.Menu, HandleMenu },
-            { GameState.Tutorial, HandleTutorial },
-            { GameState.Playing, HandlePlaying },
-            { GameState.Results, HandleResults },
-        };
+
         if (
             !PlayerPrefs.HasKey("TutorialCompleted")
             || PlayerPrefs.GetInt("TutorialCompleted") == 0
@@ -69,11 +63,6 @@ public class GameManager : MonoBehaviour
             CurrentState = GameState.Menu;
         }
         Debug.Log("Press Space to start the game");
-    }
-
-    void Update()
-    {
-        stateHandlers[CurrentState]();
     }
 
     public void StartGame()
@@ -105,7 +94,7 @@ public class GameManager : MonoBehaviour
             .material.color = Color.blue;
 
         // Calculate correct moves
-        correctMoves = GetKnightMoves(knightPosition);
+        correctMoves = Helpers.GetKnightMoves(knightPosition, BoardManager.BoardSize);
         clickedMoves = new HashSet<Vector2Int>();
         correctClickedMoves = new HashSet<Vector2Int>();
 
@@ -117,23 +106,6 @@ public class GameManager : MonoBehaviour
         {
             Timer.Instance.StartTimer(15f);
         }
-    }
-
-    HashSet<Vector2Int> GetKnightMoves(Vector2Int pos)
-    {
-        HashSet<Vector2Int> moves = new HashSet<Vector2Int>();
-        int[] dx = { 2, 2, -2, -2, 1, 1, -1, -1 };
-        int[] dz = { 1, -1, 1, -1, 2, -2, 2, -2 };
-        for (int i = 0; i < 8; i++)
-        {
-            int nx = pos.x + dx[i];
-            int nz = pos.y + dz[i];
-            if (nx >= 0 && nx < BoardManager.BoardSize && nz >= 0 && nz < BoardManager.BoardSize)
-            {
-                moves.Add(new Vector2Int(nx, nz));
-            }
-        }
-        return moves;
     }
 
     public void OnSquareClicked(Vector2Int pos)
@@ -203,26 +175,8 @@ public class GameManager : MonoBehaviour
 
     public void RestartGame()
     {
-        // Destroy all squares
-        if (boardManager.grid != null)
-        {
-            for (int x = 0; x < BoardManager.BoardSize; x++)
-            {
-                for (int z = 0; z < BoardManager.BoardSize; z++)
-                {
-                    if (boardManager.grid[x, z] != null)
-                    {
-                        Destroy(boardManager.grid[x, z].gameObject);
-                    }
-                }
-            }
-            boardManager.grid = null;
-        }
-
-        // Destroy knight if exists
-        GameObject knight = GameObject.Find("Knight");
-        if (knight != null)
-            Destroy(knight);
+        // Clean up board and knight
+        boardManager.ClearBoard();
 
         // Stop timer if running
         if (Timer.Instance != null)
@@ -242,29 +196,19 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void HandleMenu()
+    private void OnStateEntered(GameState state)
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        switch (state)
         {
-            StartGame();
-        }
-    }
-
-    private void HandleTutorial()
-    {
-        TutorialManager.Instance.HandleTutorial();
-    }
-
-    private void HandlePlaying()
-    {
-        // Game logic handled in OnSquareClicked
-    }
-
-    private void HandleResults()
-    {
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            RestartGame();
+            case GameState.Menu:
+                break;
+            case GameState.Tutorial:
+                TutorialManager.Instance.StartTutorial();
+                break;
+            case GameState.Playing:
+                break;
+            case GameState.Results:
+                break;
         }
     }
 }

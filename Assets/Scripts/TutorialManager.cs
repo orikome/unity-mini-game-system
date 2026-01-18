@@ -16,12 +16,19 @@ public class TutorialManager : MonoBehaviour
         Instance = this;
     }
 
-    public void HandleTutorial()
+    public void StartTutorial()
     {
         if (!tutorialActive)
         {
             InitializeTutorial();
         }
+    }
+
+    private void Update()
+    {
+        if (!tutorialActive)
+            return;
+
         // Check if tutorial completed
         if (correctMoves.All(m => clickedMoves.Contains(m)))
         {
@@ -54,7 +61,7 @@ public class TutorialManager : MonoBehaviour
             .material.color = Color.blue;
 
         // Calculate correct moves
-        correctMoves = GetKnightMoves(knightPosition);
+        correctMoves = Helpers.GetKnightMoves(knightPosition, BoardManager.BoardSize);
         clickedMoves = new HashSet<Vector2Int>();
 
         // Highlight correct moves with yellow
@@ -65,23 +72,6 @@ public class TutorialManager : MonoBehaviour
         }
 
         // Tutorial UI is activated by UIManager on state change
-    }
-
-    private HashSet<Vector2Int> GetKnightMoves(Vector2Int pos)
-    {
-        HashSet<Vector2Int> moves = new HashSet<Vector2Int>();
-        int[] dx = { 2, 2, -2, -2, 1, 1, -1, -1 };
-        int[] dz = { 1, -1, 1, -1, 2, -2, 2, -2 };
-        for (int i = 0; i < 8; i++)
-        {
-            int nx = pos.x + dx[i];
-            int nz = pos.y + dz[i];
-            if (nx >= 0 && nx < BoardManager.BoardSize && nz >= 0 && nz < BoardManager.BoardSize)
-            {
-                moves.Add(new Vector2Int(nx, nz));
-            }
-        }
-        return moves;
     }
 
     public void OnSquareClicked(Vector2Int pos)
@@ -107,25 +97,10 @@ public class TutorialManager : MonoBehaviour
         tutorialActive = false;
         PlayerPrefs.SetInt("TutorialCompleted", 1);
         PlayerPrefs.Save();
+
         // Clean up board
-        if (boardManager.grid != null)
-        {
-            for (int x = 0; x < BoardManager.BoardSize; x++)
-            {
-                for (int z = 0; z < BoardManager.BoardSize; z++)
-                {
-                    if (boardManager.grid[x, z] != null)
-                    {
-                        Destroy(boardManager.grid[x, z].gameObject);
-                    }
-                }
-            }
-            boardManager.grid = null;
-        }
-        // Destroy knight
-        GameObject knight = GameObject.Find("Knight");
-        if (knight != null)
-            Destroy(knight);
+        boardManager.ClearBoard();
+
         // Go to Menu
         GameManager.Instance.CurrentState = GameState.Menu;
     }

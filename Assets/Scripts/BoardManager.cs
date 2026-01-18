@@ -38,4 +38,29 @@ public class BoardManager : MonoBehaviour
             }
         }
     }
+
+    public void ClearBoard()
+    {
+        if (grid != null)
+        {
+            for (int x = 0; x < BoardSize; x++)
+            {
+                for (int z = 0; z < BoardSize; z++)
+                {
+                    if (grid[x, z] != null)
+                    {
+                        Destroy(grid[x, z].gameObject);
+                    }
+                }
+            }
+            grid = null;
+        }
+
+        // Destroy knight if exists
+        GameObject knight = GameObject.Find("Knight");
+        if (knight != null)
+        {
+            Destroy(knight);
+        }
+    }
 }

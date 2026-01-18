@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public static class Helpers
@@ -7,6 +8,25 @@ public static class Helpers
     public static float EaseOutCubic(float t)
     {
         return 1 - Mathf.Pow(1 - t, 3);
+    }
+
+    // Calculate all valid knight moves from a position on the board
+    public static HashSet<Vector2Int> GetKnightMoves(Vector2Int pos, int boardSize)
+    {
+        HashSet<Vector2Int> moves = new HashSet<Vector2Int>();
+        int[] dx = { 2, 2, -2, -2, 1, 1, -1, -1 };
+        int[] dz = { 1, -1, 1, -1, 2, -2, 2, -2 };
+
+        for (int i = 0; i < 8; i++)
+        {
+            int nx = pos.x + dx[i];
+            int nz = pos.y + dz[i];
+            if (nx >= 0 && nx < boardSize && nz >= 0 && nz < boardSize)
+            {
+                moves.Add(new Vector2Int(nx, nz));
+            }
+        }
+        return moves;
     }
 
     public static IEnumerator AnimateTransition(

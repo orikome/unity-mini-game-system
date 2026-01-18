@@ -15,16 +15,20 @@ public class TimerDisplay : MonoBehaviour
     [SerializeField]
     private float warningThreshold = 10f;
 
-    private void Update()
+    private void Start()
     {
-        if (Timer.Instance == null)
+        if (Timer.Instance != null)
         {
-            timerText.text = "0:00";
-            return;
+            Timer.Instance.OnTimerTick += UpdateTimerDisplay;
         }
+    }
 
-        float remainingTime = Timer.Instance.RemainingTime;
-        UpdateTimerDisplay(remainingTime);
+    private void OnDestroy()
+    {
+        if (Timer.Instance != null)
+        {
+            Timer.Instance.OnTimerTick -= UpdateTimerDisplay;
+        }
     }
 
     private void UpdateTimerDisplay(float time)
