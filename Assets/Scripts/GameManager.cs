@@ -6,6 +6,12 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
+
+    [SerializeField]
+    private GameConfig config;
+
+    public GameConfig Config => config;
+
     private GameState _currentState;
     public GameState CurrentState
     {
@@ -67,34 +73,28 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-        boardManager.GenerateBoard();
+        boardManager.GenerateBoard(config.boardSize);
 
         CurrentState = GameState.Playing;
         Debug.Log("Game started! Click all possible knight moves.");
 
         // Place knight on random square
         knightPosition = new Vector2Int(
-            UnityEngine.Random.Range(0, BoardManager.BoardSize),
-            UnityEngine.Random.Range(0, BoardManager.BoardSize)
+            UnityEngine.Random.Range(0, config.boardSize),
+            UnityEngine.Random.Range(0, config.boardSize)
         );
 
-        // Spawn knight primitive
-        GameObject knight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        knight.transform.position = new Vector3(
-            knightPosition.x - BoardManager.BoardSize / 2f,
-            1,
-            knightPosition.y - BoardManager.BoardSize / 2f
-        );
-        knight.name = "Knight";
+        // Spawn knight
+        GameObject knight = SpawnKnight(knightPosition);
 
         // Set knight square color
         boardManager
             .grid[knightPosition.x, knightPosition.y]
             .GetComponent<Renderer>()
-            .material.color = Color.blue;
+            .material.color = config.knightSquareColor;
 
         // Calculate correct moves
-        correctMoves = Helpers.GetKnightMoves(knightPosition, BoardManager.BoardSize);
+        correctMoves = Helpers.GetKnightMoves(knightPosition, config.boardSize);
         clickedMoves = new HashSet<Vector2Int>();
         correctClickedMoves = new HashSet<Vector2Int>();
 
@@ -104,7 +104,7 @@ public class GameManager : MonoBehaviour
         // Start timer
         if (Timer.Instance != null)
         {
-            Timer.Instance.StartTimer(15f);
+            Timer.Instance.StartTimer(config.roundDuration);
         }
     }
 
@@ -125,13 +125,15 @@ public class GameManager : MonoBehaviour
         {
             // correct move
             correctClickedMoves.Add(pos);
-            boardManager.grid[pos.x, pos.y].GetComponent<Renderer>().material.color = Color.green;
+            boardManager.grid[pos.x, pos.y].GetComponent<Renderer>().material.color =
+                config.correctMoveColor;
             OnScoreChanged?.Invoke(correctClickedMoves.Count, correctMoves.Count);
         }
         else
         {
             // wrong move
-            boardManager.grid[pos.x, pos.y].GetComponent<Renderer>().material.color = Color.red;
+            boardManager.grid[pos.x, pos.y].GetComponent<Renderer>().material.color =
+                config.incorrectMoveColor;
         }
 
         // Check if all correct moves are clicked
@@ -186,6 +188,30 @@ public class GameManager : MonoBehaviour
 
         score = 0;
         StartGame();
+    }
+
+    private GameObject SpawnKnight(Vector2Int position)
+    {
+        GameObject knight;
+
+        if (config.knightPrefab != null)
+        {
+            knight = Instantiate(config.knightPrefab);
+        }
+        else
+        {
+            // Fallback to primitive if no prefab assigned
+            knight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        }
+
+        knight.transform.position = new Vector3(
+            position.x - config.boardSize / 2f,
+            config.knightHeight,
+            position.y - config.boardSize / 2f
+        );
+        knight.name = "Knight";
+
+        return knight;
     }
 
     private void OnDestroy()

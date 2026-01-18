@@ -2,26 +2,27 @@ using UnityEngine;
 
 public class BoardManager : MonoBehaviour
 {
-    public static int BoardSize = 5;
     public ClickableSquare[,] grid;
+    private int boardSize;
 
-    public void GenerateBoard()
+    public void GenerateBoard(int size)
     {
-        grid = new ClickableSquare[BoardSize, BoardSize];
+        boardSize = size;
+        grid = new ClickableSquare[boardSize, boardSize];
         GenerateGrid();
     }
 
     private void GenerateGrid()
     {
-        for (int x = 0; x < BoardSize; x++)
+        for (int x = 0; x < boardSize; x++)
         {
-            for (int z = 0; z < BoardSize; z++)
+            for (int z = 0; z < boardSize; z++)
             {
                 GameObject squareObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 squareObj.transform.position = new Vector3(
-                    x - BoardSize / 2f,
+                    x - boardSize / 2f,
                     -5f, // Start below the board
-                    z - BoardSize / 2f
+                    z - boardSize / 2f
                 );
                 squareObj.transform.parent = transform;
                 squareObj.name = $"Square_{x}_{z}";
@@ -43,9 +44,9 @@ public class BoardManager : MonoBehaviour
     {
         if (grid != null)
         {
-            for (int x = 0; x < BoardSize; x++)
+            for (int x = 0; x < boardSize; x++)
             {
-                for (int z = 0; z < BoardSize; z++)
+                for (int z = 0; z < boardSize; z++)
                 {
                     if (grid[x, z] != null)
                     {

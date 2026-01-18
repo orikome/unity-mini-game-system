@@ -12,9 +12,6 @@ public class TimerDisplay : MonoBehaviour
     [SerializeField]
     private Color warningColor = Color.red;
 
-    [SerializeField]
-    private float warningThreshold = 10f;
-
     private void Start()
     {
         if (Timer.Instance != null)
@@ -39,7 +36,11 @@ public class TimerDisplay : MonoBehaviour
         timerText.text = $"{minutes}:{seconds:00}";
 
         // Change color when time is running low
-        if (time <= warningThreshold && time > 0f)
+        if (
+            GameManager.Instance != null
+            && time <= GameManager.Instance.Config.warningThreshold
+            && time > 0f
+        )
         {
             timerText.color = warningColor;
         }

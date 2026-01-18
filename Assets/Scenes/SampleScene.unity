@@ -738,9 +738,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timerText: {fileID: 431206994}
+  config: {fileID: 0}
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   warningColor: {r: 1, g: 0, b: 0, a: 1}
-  warningThreshold: 10
 --- !u!1 &482123306
 GameObject:
   m_ObjectHideFlags: 0
@@ -1472,6 +1472,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15c2c15cfdc926e4ea316c02c800677d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  config: {fileID: 11400000, guid: 1e98ab89b2f53dc418201665c62b1a66, type: 2}
 --- !u!1 &957731922
 GameObject:
   m_ObjectHideFlags: 0
@@ -1675,6 +1676,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d50a9cadd286c4e479820bedbae3e869, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  config: {fileID: 0}
 --- !u!4 &1017141332
 Transform:
   m_ObjectHideFlags: 0

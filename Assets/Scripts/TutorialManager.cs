@@ -5,6 +5,7 @@ using UnityEngine;
 public class TutorialManager : MonoBehaviour
 {
     public static TutorialManager Instance;
+
     private BoardManager boardManager;
     private Vector2Int knightPosition;
     private HashSet<Vector2Int> correctMoves;
@@ -40,35 +41,34 @@ public class TutorialManager : MonoBehaviour
     {
         tutorialActive = true;
         boardManager = FindFirstObjectByType<BoardManager>();
-        boardManager.GenerateBoard();
+        boardManager.GenerateBoard(GameManager.Instance.Config.boardSize);
 
-        // Place knight on a fixed position for tutorial, say center
-        knightPosition = new Vector2Int(2, 2); // Assuming BoardSize 5, center
+        // Place knight on a fixed position for tutorial
+        knightPosition = GameManager.Instance.Config.tutorialKnightPosition;
 
-        // Spawn knight primitive
-        GameObject knight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        knight.transform.position = new Vector3(
-            knightPosition.x - BoardManager.BoardSize / 2f,
-            1,
-            knightPosition.y - BoardManager.BoardSize / 2f
-        );
-        knight.name = "Knight";
+        // Spawn knight
+        GameObject knight = SpawnKnight(knightPosition);
 
         // Set knight square color
         boardManager
             .grid[knightPosition.x, knightPosition.y]
             .GetComponent<Renderer>()
-            .material.color = Color.blue;
+            .material.color = GameManager.Instance.Config.knightSquareColor;
 
         // Calculate correct moves
-        correctMoves = Helpers.GetKnightMoves(knightPosition, BoardManager.BoardSize);
+        correctMoves = Helpers.GetKnightMoves(
+            knightPosition,
+            GameManager.Instance.Config.boardSize
+        );
         clickedMoves = new HashSet<Vector2Int>();
 
         // Highlight correct moves with yellow
         foreach (var move in correctMoves)
         {
-            boardManager.grid[move.x, move.y].GetComponent<Renderer>().material.color =
-                Color.yellow;
+            boardManager.grid[move.x, move.y].GetComponent<Renderer>().material.color = GameManager
+                .Instance
+                .Config
+                .tutorialHighlightColor;
         }
 
         // Tutorial UI is activated by UIManager on state change
@@ -83,13 +83,43 @@ public class TutorialManager : MonoBehaviour
         if (correctMoves.Contains(pos))
         {
             // correct move, keep yellow or change to green?
-            boardManager.grid[pos.x, pos.y].GetComponent<Renderer>().material.color = Color.green;
+            boardManager.grid[pos.x, pos.y].GetComponent<Renderer>().material.color = GameManager
+                .Instance
+                .Config
+                .correctMoveColor;
         }
         else
         {
             // wrong move
-            boardManager.grid[pos.x, pos.y].GetComponent<Renderer>().material.color = Color.red;
+            boardManager.grid[pos.x, pos.y].GetComponent<Renderer>().material.color = GameManager
+                .Instance
+                .Config
+                .incorrectMoveColor;
         }
+    }
+
+    private GameObject SpawnKnight(Vector2Int position)
+    {
+        GameObject knight;
+
+        if (GameManager.Instance.Config.knightPrefab != null)
+        {
+            knight = Instantiate(GameManager.Instance.Config.knightPrefab);
+        }
+        else
+        {
+            // Fallback to primitive if no prefab assigned
+            knight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        }
+
+        knight.transform.position = new Vector3(
+            position.x - GameManager.Instance.Config.boardSize / 2f,
+            GameManager.Instance.Config.knightHeight,
+            position.y - GameManager.Instance.Config.boardSize / 2f
+        );
+        knight.name = "Knight";
+
+        return knight;
     }
 
     private void CompleteTutorial()
