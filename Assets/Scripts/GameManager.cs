@@ -20,17 +20,21 @@ public class GameManager : MonoBehaviour
         }
     }
     public event Action<GameState> OnStateChanged;
+    public event Action<int, int> OnScoreChanged; // (correctClicked, totalMoves)
     private BoardManager boardManager;
     private Vector2Int knightPosition;
 
     // Using HashSet for unique positions
     private HashSet<Vector2Int> correctMoves;
     private HashSet<Vector2Int> clickedMoves;
+    private HashSet<Vector2Int> correctClickedMoves;
     private int score;
     private bool didWin;
     private Dictionary<GameState, Action> stateHandlers;
 
     public bool DidWin => didWin;
+    public int CorrectClickedCount => correctClickedMoves?.Count ?? 0;
+    public int TotalMoves => correctMoves?.Count ?? 0;
 
     void Awake()
     {
@@ -103,6 +107,10 @@ public class GameManager : MonoBehaviour
         // Calculate correct moves
         correctMoves = GetKnightMoves(knightPosition);
         clickedMoves = new HashSet<Vector2Int>();
+        correctClickedMoves = new HashSet<Vector2Int>();
+
+        // Fire initial score event
+        OnScoreChanged?.Invoke(0, correctMoves.Count);
 
         // Start timer
         if (Timer.Instance != null)
@@ -144,7 +152,9 @@ public class GameManager : MonoBehaviour
         if (correctMoves.Contains(pos))
         {
             // correct move
+            correctClickedMoves.Add(pos);
             boardManager.grid[pos.x, pos.y].GetComponent<Renderer>().material.color = Color.green;
+            OnScoreChanged?.Invoke(correctClickedMoves.Count, correctMoves.Count);
         }
         else
         {
