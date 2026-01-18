@@ -158,8 +158,8 @@ public class GameManager : MonoBehaviour
         if (knight != null)
             Destroy(knight);
 
-        CurrentState = GameState.Menu;
-        Debug.Log("Press Space to start the game");
+        score = 0;
+        StartGame();
     }
 
     private void HandleMenu()
