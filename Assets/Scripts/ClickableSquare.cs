@@ -14,8 +14,9 @@ public class ClickableSquare : MonoBehaviour
 
     private void OnMouseDown()
     {
-        Debug.Log($"Clicked square at {position}");
-        GetComponent<Renderer>().material.color =
-            GetComponent<Renderer>().material.color == Color.white ? Color.red : Color.white;
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnSquareClicked(position);
+        }
     }
 }

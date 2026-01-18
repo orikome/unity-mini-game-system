@@ -3,7 +3,7 @@ using UnityEngine;
 public class BoardManager : MonoBehaviour
 {
     public static int BoardSize = 5;
-    private ClickableSquare[,] grid;
+    public ClickableSquare[,] grid;
 
     void Start()
     {
