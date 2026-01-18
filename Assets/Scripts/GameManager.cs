@@ -37,6 +37,12 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         boardManager = FindFirstObjectByType<BoardManager>(); // Could be cached
+
+        // Subscribe to timer events
+        if (Timer.Instance != null)
+        {
+            Timer.Instance.OnTimeUp += OnTimeUp;
+        }
         stateHandlers = new Dictionary<GameState, Action>
         {
             { GameState.Menu, HandleMenu },
@@ -94,6 +100,12 @@ public class GameManager : MonoBehaviour
         // Calculate correct moves
         correctMoves = GetKnightMoves(knightPosition);
         clickedMoves = new HashSet<Vector2Int>();
+
+        // Start timer
+        if (Timer.Instance != null)
+        {
+            Timer.Instance.StartTimer(15f);
+        }
     }
 
     HashSet<Vector2Int> GetKnightMoves(Vector2Int pos)
@@ -146,9 +158,23 @@ public class GameManager : MonoBehaviour
 
     void EndGame()
     {
+        // Stop timer
+        if (Timer.Instance != null)
+        {
+            Timer.Instance.StopTimer();
+        }
+
         CurrentState = GameState.Results;
         score = correctMoves.Count;
         Debug.Log($"All correct moves clicked! Score: {score}. Press R to restart.");
+    }
+
+    void OnTimeUp()
+    {
+        if (CurrentState == GameState.Playing)
+        {
+            EndGame();
+        }
     }
 
     public void RestartGame()
@@ -174,8 +200,22 @@ public class GameManager : MonoBehaviour
         if (knight != null)
             Destroy(knight);
 
+        // Stop timer if running
+        if (Timer.Instance != null)
+        {
+            Timer.Instance.StopTimer();
+        }
+
         score = 0;
         StartGame();
+    }
+
+    private void OnDestroy()
+    {
+        if (Timer.Instance != null)
+        {
+            Timer.Instance.OnTimeUp -= OnTimeUp;
+        }
     }
 
     private void HandleMenu()
