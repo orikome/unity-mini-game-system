@@ -52,7 +52,7 @@ public class GameManager : MonoBehaviour
         stateHandlers[CurrentState]();
     }
 
-    void StartGame()
+    public void StartGame()
     {
         CurrentState = GameState.Playing;
         Debug.Log("Game started! Click all possible knight moves.");
@@ -129,7 +129,7 @@ public class GameManager : MonoBehaviour
         Debug.Log($"All correct moves clicked! Score: {score}. Press R to restart.");
     }
 
-    void RestartGame()
+    public void RestartGame()
     {
         // Reset board colors
         for (int x = 0; x < BoardManager.BoardSize; x++)
